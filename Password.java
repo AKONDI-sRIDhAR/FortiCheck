@@ -1,5 +1,7 @@
 import java.util.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.*;
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -16,6 +18,7 @@ public class Password {
         while(true)
         {
         System.out.println("----Welcome to Forticheck-----");
+        System.out.println("(Default credentials -> root : root)");
         System.out.println("Enter your username: ");
         String user = sc.nextLine();
         System.out.println("Enter your password: ");
@@ -65,21 +68,25 @@ public class Password {
         System.out.println("----------");
         System.out.println("Welcome " + user);
         System.out.print("Select one from the below\n");
-        System.out.print("1) Add user\n2) Remove User\n3) Password Strength Checker\n4) logout\n5)Encryption\n6) Decryption\n7) Exit\n->");
+        System.out.print("1) Add user\n2) Remove User\n3) Password Strength Checker\n4) logout\n5) Encryption\n6) Decryption\n7) Generate Hash for a file\n8) File integrity checker\n9) Exit\n->");
         int c=sc.nextInt();
         sc.nextLine();
         switch (c){
             case 1: adduser();
             validuser(user);
                 break;
+
             case 2: removeuser();
             validuser(user);
                 break;
+
             case 3: passwordchecker();
             validuser(user);
                 break;
+
             case 4: System.out.println("Logging out --");
             return;
+
             case 5 :
                 System.out.println("Enter a text to encrypt : ");
                 String enc=sc.nextLine();
@@ -88,6 +95,7 @@ public class Password {
                     System.out.println("Encrypted text: " + encResult);
             validuser(user);
                 break;
+
             case 6:
                 System.out.println("Enter a text to decrypt : ");
                 String dec=sc.nextLine();
@@ -95,8 +103,30 @@ public class Password {
                 if(decResult != null)
                     System.out.println("Decrypted text: " + decResult);
             validuser(user);
+            
                 break;
+
             case 7:
+            try {
+            generate();
+            }
+            catch(Exception e) { e.printStackTrace();
+            }
+            validuser(user);
+                break;
+
+            case 8:
+             try {
+            check();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            validuser(user);
+                 break;
+
+            case 9:
             System.out.println("---Exiting the Forticheck---\nThank you");
             System.exit(0);
             break;
@@ -218,7 +248,7 @@ public class Password {
         if(az) check++;
         if(num) check++;
         if(sp) check++;
-        int score=(int)(check/5.0) * 100;
+        int score=(int)((check/5.0) * 100);
         if(score==100)
         {
             System.out.println("Password is 100% Secure");
@@ -273,6 +303,80 @@ public class Password {
             e.printStackTrace();
         }
         return null;
+    }
+    public static void generate() throws Exception
+    {
+        System.out.println("---Hash Generator---");
+        System.out.println("Choose an algorithm (SHA-256 / SHA-1 / MD5) : ");
+        String algo=sc.nextLine().toUpperCase();
+        if (algo.equals("SHA-256") || algo.equals("MD5") || algo.equals("SHA-1")) {
+        System.out.println("Enter the path for the file : ");
+        String path=sc.nextLine().trim();
+        File f = new File(path);
+        if(!f.exists())
+        {
+            System.out.println("File Not found");
+            generate();
+        }
+        else{
+        String hash=generatehash(path,algo);
+        System.out.println("Required Hash is : " + hash);
+        }
+    }
+        else{
+            System.out.println("TRY AGAIN WRONG ALGORITHM");
+            generate();
+        }
+        
+        
+
+    }
+    public static String generatehash(String path, String algo) throws Exception
+    {
+        MessageDigest digest = MessageDigest.getInstance(algo);
+        byte[] file = Files.readAllBytes(Paths.get(path));
+        byte[] hash = digest.digest(file);
+
+        StringBuilder sb = new StringBuilder();
+        for(byte b : hash) sb.append(String.format("%02x", b));
+        return sb.toString();
+
+    }
+    public static void check() throws Exception
+    {
+        System.out.println("---Hash Checker---");
+        System.out.println("Enter the chosen algo (SHA-256 / SHA-1 / MD5): ");
+        String algo=sc.nextLine().toUpperCase();
+        if (algo.equals("SHA-256") || algo.equals("MD5") || algo.equals("SHA-1")) {
+        System.out.println("Enter the File path : ");
+        String path=sc.nextLine().trim();
+        File f = new File(path);
+        if(!f.exists())
+        {
+            System.out.println("File Not found");
+            generate();
+        }
+        else{
+        System.out.println("Enter the previous hash : ");
+        String hash=sc.nextLine();
+        
+        String oldhash=generatehash(path,algo);
+
+        if(oldhash.equals(hash))
+        {
+            System.out.println("The file is good to go !\n---------------------");
+        }
+        else 
+        {
+            System.out.println(("The previous hash : " + oldhash + "\nNew hash : " + hash + "\n Are not matching !"));
+            System.out.println("The file is corrupted !!!\n--------------------");   
+        }
+    }
+    }
+    else{
+        System.out.println("WRONG INPUT TRY AGAIN");
+        check();
+    }
     }
 
 }
