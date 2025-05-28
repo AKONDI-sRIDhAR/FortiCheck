@@ -1,47 +1,73 @@
-# FortiCheck
-Forticheck is a lightweight, console-based user authentication and password management tool written in Java. It provides a simple yet effective way to securely manage user credentials with AES encryption, password strength checking, and basic administrative user controls.
+# 🔐 FortiCheck - Java Security Utility
 
-Features
-User Authentication: Secure login system validating usernames and AES-encrypted passwords.
+**FortiCheck** is a beginner-friendly command-line application built in Java that provides basic user authentication, encryption, password strength checking, and file integrity features. Ideal for learning cryptography, authentication, and secure file operations in Java.
 
-User Management: Add and remove users (admin-only operations).
+---
 
-Password Strength Checker: Evaluates password complexity based on length, uppercase, lowercase, numbers, and special characters.
+## 📌 Features
 
-Encryption & Decryption: AES-256 encryption (CBC mode with PKCS5 padding) for storing passwords and protecting sensitive data.
+### 🧑‍💼 User Management
+- Login authentication using AES-encrypted passwords
+- Default user: `root:root`
+- Add or remove users (admin password: `admin`)
 
-Simple Console Interface: Intuitive menu-driven interface for easy use.
+### 🔐 Encryption & Decryption
+- AES encryption/decryption using CBC mode
+- Predefined secret key and IV
 
-Credential Storage: Usernames and encrypted passwords stored in a local file (credentials.txt).
+### 💪 Password Strength Checker
+Evaluates a password based on:
+- Minimum length (8+ characters)
+- Use of uppercase and lowercase letters
+- Numeric digits
+- Special characters
 
-How It Works
-Users register with a username and password; passwords are encrypted with AES and stored securely.
+### 🧾 Hash Generator
+Generate cryptographic hash of files using:
+- SHA-256
+- SHA-1
+- MD5
 
-On login, user input passwords are encrypted and matched against stored ciphertext.
+### 🧪 File Integrity Checker
+Compare existing file hash with current one to detect file corruption or tampering.
 
-Admins can add or remove users by verifying an admin password.
+---
 
-Password strength can be checked interactively.
+## 📁 File Structure
 
-Provides utilities for encrypting and decrypting arbitrary text inputs.
+FortiCheck/
+│
+├── Password.java # Main application source code
+├── credentials.txt # Stores user credentials (username:encrypted_password)
+└── README.md # This file
 
-Tech Stack
-Java (Standard Edition)
+yaml
+Copy
+Edit
 
-AES Encryption with javax.crypto
+---
 
-File I/O for credential management
+## 🚀 How to Run
 
-Console-based user interface
+### ✅ Prerequisites
+- Java JDK 8 or later installed
 
-Usage
-Clone the repo and run the Password class. The application will prompt for username and password, then provide a menu for user management, password checking, encryption, and decryption.
+### 🔧 Compile the Program
 
-Future Improvements
-Implement salted password hashing (e.g., bcrypt) instead of reversible encryption for better security.
+```bash
+javac Password.java
+▶️ Run the Program
+bash
+Copy
+Edit
+java Password
+🧪 First Login
+Use the default credentials:
 
-Improve admin authentication mechanism.
+Username: root
 
-Add user session management and timeout.
+Password: root
 
-Implement a GUI for better usability.
+⚠️ Security Disclaimer
+This application is not production ready and is intended for educational purposes only.
+It uses static AES keys, lacks proper password hashing (e.g., bcrypt/scrypt), and stores credentials insecurely.
